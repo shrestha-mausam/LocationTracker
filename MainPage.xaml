@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:LocationTracker.Controls"
+             xmlns:viewmodels="clr-namespace:LocationTracker.ViewModels"
+             xmlns:local="clr-namespace:LocationTracker"
+             x:Class="LocationTracker.MainPage"
+             x:DataType="viewmodels:MainViewModel"
+             Title="Location Tracker">
+
+    <Grid>
+        <!-- Main Map -->
+        <controls:HeatmapMapControl 
+            x:Name="MapControl"
+            LocationPoints="{Binding LocationPoints}"
+            ShowHeatmap="{Binding ShowHeatmap}"
+            HeatmapRadius="{Binding HeatmapRadius}"
+            Grid.Row="0"
+            Grid.Column="0" />
+
+        <!-- Loading Overlay -->
+        <Grid Grid.Row="0" Grid.Column="0" 
+              BackgroundColor="#80000000" 
+              IsVisible="{Binding IsLoading}">
+            <ActivityIndicator 
+                IsRunning="{Binding IsLoading}"
+                Color="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+            <Label 
+                Text="Loading..."
+                TextColor="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Margin="0,40,0,0" />
+        </Grid>
+
+        <!-- Top Status Bar -->
+        <Frame Grid.Row="0" Grid.Column="0"
+               BackgroundColor="#E0000000"
+               CornerRadius="10"
+               Padding="15,10"
+               Margin="15,50,15,0"
+               HorizontalOptions="Fill"
+               VerticalOptions="Start">
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Label Text="{Binding TrackingStatusText}"
+                       TextColor="White"
+                       FontSize="14"
+                       VerticalOptions="Center"
+                       HorizontalOptions="FillAndExpand" />
+                <Label Text="{Binding LocationCount, StringFormat='{0} points'}"
+                       TextColor="LightGray"
+                       FontSize="12"
+                       VerticalOptions="Center" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Bottom Control Panel -->
+        <Frame Grid.Row="0" Grid.Column="0"
+               BackgroundColor="#E0000000"
+               CornerRadius="15"
+               Padding="20,15"
+               Margin="15,0,15,30"
+               HorizontalOptions="Fill"
+               VerticalOptions="End">
+            <StackLayout Spacing="15">
+                <!-- Primary Tracking Button -->
+                <Button 
+                    Text="{Binding IsTracking, Converter={StaticResource BoolToTrackingTextConverter}}"
+                    BackgroundColor="{Binding IsTracking, Converter={StaticResource BoolToTrackingColorConverter}}"
+                    TextColor="White"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Command="{Binding ToggleTrackingCommand}"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
+
+                <!-- Secondary Controls Row -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <!-- Get Current Location -->
+                    <Button Grid.Column="0"
+                            Text="📍"
+                            BackgroundColor="#2196F3"
+                            TextColor="White"
+                            CornerRadius="20"
+                            HeightRequest="40"
+                            WidthRequest="40"
+                            Command="{Binding GetCurrentLocationCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
+
+                    <!-- Toggle Heatmap -->
+                    <Button Grid.Column="1"
+                            Text="{Binding ShowHeatmap, Converter={StaticResource BoolToHeatmapTextConverter}}"
+                            BackgroundColor="{Binding ShowHeatmap, Converter={StaticResource BoolToHeatmapColorConverter}}"
+                            TextColor="White"
+                            CornerRadius="20"
+                            HeightRequest="40"
+                            Command="{Binding ToggleHeatmapCommand}"
+                            IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}" />
+
+                    <!-- Clear Data -->
+                    <Button Grid.Column="2"
+                            Text="🗑️"
+                            BackgroundColor="#F44336"
+                            TextColor="White"
+                            CornerRadius="20"
+                            HeightRequest="40"
+                            WidthRequest="40"
+                            Command="{Binding ClearDataCommand}"
+                            IsEnabled="{Binding CanClearData, Converter={StaticResource BoolToBoolConverter}}" />
+                </Grid>
+
+                <!-- Heatmap Radius Slider -->
+                <StackLayout IsVisible="{Binding ShowHeatmap}">
+                    <Label Text="{Binding HeatmapRadius, StringFormat='Heatmap Radius: {0:F0}m'}"
+                           TextColor="White"
+                           FontSize="12"
+                           HorizontalOptions="Center" />
+                    <Slider Value="{Binding HeatmapRadius}"
+                            Minimum="10"
+                            Maximum="200"
+                            ThumbColor="White"
+                            MinimumTrackColor="White"
+                            MaximumTrackColor="#666" />
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+    </Grid>
+
+    <ContentPage.Resources>
+        <!-- Converters -->
+        <ResourceDictionary>
+            <!-- Bool to Tracking Button Text -->
+            <local:BoolToTrackingTextConverter x:Key="BoolToTrackingTextConverter" />
+            
+            <!-- Bool to Tracking Button Color -->
+            <local:BoolToTrackingColorConverter x:Key="BoolToTrackingColorConverter" />
+            
+            <!-- Bool to Heatmap Button Text -->
+            <local:BoolToHeatmapTextConverter x:Key="BoolToHeatmapTextConverter" />
+            
+            <!-- Bool to Heatmap Button Color -->
+            <local:BoolToHeatmapColorConverter x:Key="BoolToHeatmapColorConverter" />
+            
+            <!-- Inverted Bool Converter -->
+            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            
+            <!-- Bool to Bool Converter (for IsEnabled) -->
+            <local:BoolToBoolConverter x:Key="BoolToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+</ContentPage>

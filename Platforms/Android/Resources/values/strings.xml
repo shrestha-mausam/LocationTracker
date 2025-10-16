@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 
+    Google Maps API Key for Android
+    
+    To use this app, you need to:
+    1. Go to https://console.cloud.google.com/
+    2. Create a new project or select an existing one
+    3. Enable "Maps SDK for Android" API
+    4. Create credentials (API Key)
+    5. Replace "YOUR_API_KEY_HERE" with your actual API key
+    6. Optionally, restrict the API key to your app's package name for security
+    
+    IMPORTANT: Never commit your actual API key to version control!
+    Consider using environment variables or build configurations for production.
+    -->
+    <string name="google_maps_key">YOUR_API_KEY_HERE</string>
+</resources>
