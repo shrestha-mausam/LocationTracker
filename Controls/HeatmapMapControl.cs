@@ -8,7 +8,7 @@ namespace LocationTracker.Controls;
 /// <summary>
 /// A custom map control that extends the MAUI Map to display heatmap overlays.
 /// </summary>
-public class HeatmapMapControl : Map
+public class HeatmapMapControl : Microsoft.Maui.Controls.Maps.Map
 {
     /// <summary>
     /// Bindable property for location points.

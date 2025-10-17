@@ -5,6 +5,7 @@ using LocationTracker.Controls;
 using LocationTracker.Services;
 using Microsoft.Maui.Handlers;
 using Microsoft.Maui.Platform;
+using Microsoft.Maui.Controls.Maps;
 using UIKit;
 
 namespace LocationTracker.Platforms.iOS.Controls;
@@ -12,34 +13,36 @@ namespace LocationTracker.Platforms.iOS.Controls;
 /// <summary>
 /// iOS-specific handler for the HeatmapMapControl.
 /// </summary>
-public class HeatmapMapHandler : MapHandler
+public class HeatmapMapHandler : ElementHandler<Microsoft.Maui.Controls.Maps.Map, MKMapView>
 {
     private MKMapView? _mapView;
     private HeatmapMapControl? _heatmapControl;
     private readonly List<MKPolygon> _heatmapPolygons = new();
 
+    public HeatmapMapHandler() : base(PropertyMapper, CommandMapper)
+    {
+    }
+
+    public static IPropertyMapper PropertyMapper = new PropertyMapper<Microsoft.Maui.Controls.Maps.Map, HeatmapMapHandler>();
+    public static CommandMapper CommandMapper = new CommandMapper<Microsoft.Maui.Controls.Maps.Map, HeatmapMapHandler>();
+
     /// <summary>
     /// Creates the platform view for the map.
     /// </summary>
     /// <returns>The platform view.</returns>
-    protected override PlatformView CreatePlatformView()
+    protected override MKMapView CreatePlatformElement()
     {
-        var platformView = base.CreatePlatformView();
-        
-        if (platformView is MKMapView mapView)
-        {
-            _mapView = mapView;
-            ConfigureMapView();
-        }
-        
-        return platformView;
+        var mapView = new MKMapView();
+        _mapView = mapView;
+        ConfigureMapView();
+        return mapView;
     }
 
     /// <summary>
     /// Connects the handler to the virtual view.
     /// </summary>
     /// <param name="platformView">The platform view.</param>
-    protected override void ConnectHandler(PlatformView platformView)
+    protected override void ConnectHandler(MKMapView platformView)
     {
         base.ConnectHandler(platformView);
         
@@ -54,7 +57,7 @@ public class HeatmapMapHandler : MapHandler
     /// Disconnects the handler from the virtual view.
     /// </summary>
     /// <param name="platformView">The platform view.</param>
-    protected override void DisconnectHandler(PlatformView platformView)
+    protected override void DisconnectHandler(MKMapView platformView)
     {
         if (_heatmapControl != null)
         {
@@ -203,8 +206,8 @@ public class HeatmapMapDelegate : MKMapViewDelegate
     /// <param name="mapView">The map view.</param>
     /// <param name="overlay">The overlay.</param>
     /// <returns>The renderer for the overlay.</returns>
-    public override MKOverlayRenderer GetViewForOverlay(MKMapView mapView, IMKOverlay overlay)
+    public override MKOverlayView GetViewForOverlay(MKMapView mapView, IMKOverlay overlay)
     {
-        return _handler.GetRendererForOverlay(mapView, overlay);
+        return new MKOverlayView(overlay);
     }
 }
